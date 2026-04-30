@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<title>Money Stream Simulator</title>
+<title>Money Stream Live</title>
 
 <style>
 body {
@@ -15,7 +15,7 @@ body {
 
 .container {
     text-align: center;
-    margin-top: 100px;
+    margin-top: 90px;
 }
 
 h1 {
@@ -36,11 +36,6 @@ h1 {
     opacity: 0.8;
 }
 
-.features {
-    margin-top: 30px;
-    line-height: 1.8;
-}
-
 .btn {
     display: inline-block;
     margin-top: 40px;
@@ -50,8 +45,8 @@ h1 {
     background: #00ff88;
     border-radius: 10px;
     text-decoration: none;
-    transition: 0.2s;
     box-shadow: 0 0 20px #00ff88;
+    transition: 0.2s;
 }
 
 .btn:hover {
@@ -66,10 +61,10 @@ h1 {
     text-shadow: 0 0 15px #00ff88;
 }
 
-#live {
+#views {
     margin-top: 10px;
-    font-size: 18px;
-    color: #ff5555;
+    font-size: 20px;
+    color: #ff4444;
     text-shadow: 0 0 10px red;
 }
 
@@ -102,47 +97,27 @@ h1 {
 @keyframes fadeOut {
     to { opacity: 0; transform: translateX(-120%); }
 }
-
-.particles span {
-    position: absolute;
-    color: #00ff88;
-    font-size: 12px;
-    animation: fall linear infinite;
-}
-
-@keyframes fall {
-    from { transform: translateY(-100px); opacity: 1; }
-    to { transform: translateY(100vh); opacity: 0; }
-}
 </style>
 </head>
 
 <body>
 
 <div class="container">
-    <h1>💸 MONEY STREAM SIMULATOR</h1>
+    <h1>💸 MONEY STREAM LIVE</h1>
 
     <div class="desc">
-        Symulator streama z donatami i live kasą 💀
+        Live fake dashboard z pobraniami i widzami 💀
     </div>
 
-    <div class="features">
-        ✔ Live downloads counter<br>
-        ✔ Fake popup spam<br>
-        ✔ Smooth kasa system<br>
-        ✔ Efekty wizualne<br>
-    </div>
-
-    <a class="btn" href="latwogagn.zip" download="MoneyStreamSimulator.zip">
+    <a class="btn" href="money-sim.zip" download="MoneyStreamSimulator.zip">
         Pobierz teraz
     </a>
 
     <div id="downloads">Pobrania: 0</div>
-    <div id="live">LIVE downloads: 0</div>
+    <div id="views">👀 Viewers online: 0</div>
 </div>
 
 <div id="popup-container"></div>
-<div class="particles" id="particles"></div>
 
 <script>
 const popupContainer = document.getElementById("popup-container");
@@ -153,35 +128,47 @@ let count = localStorage.getItem("downloads");
 if (count === null) count = 500;
 count = parseInt(count);
 
-const el = document.getElementById("downloads");
-const live = document.getElementById("live");
+const downloadsEl = document.getElementById("downloads");
+const viewsEl = document.getElementById("views");
 
+// smooth start
 function animateTo(target) {
     let current = 0;
 
     const interval = setInterval(() => {
         current += Math.ceil((target - current) / 10);
-        el.innerText = "Pobrania: " + current.toLocaleString();
+        downloadsEl.innerText = "Pobrania: " + current.toLocaleString();
 
-        if (current >= target) {
-            el.innerText = "Pobrania: " + target.toLocaleString();
-            clearInterval(interval);
-        }
+        if (current >= target) clearInterval(interval);
     }, 25);
 }
 
 animateTo(count);
 
-// live fake growth 💀
+// live updates
 setInterval(() => {
-    let gain = Math.floor(Math.random() * 3);
+    let gain = Math.floor(Math.random() * 4);
     count += gain;
 
     localStorage.setItem("downloads", count);
 
-    el.innerText = "Pobrania: " + count.toLocaleString();
-    live.innerText = "LIVE downloads: +" + gain;
+    downloadsEl.innerText = "Pobrania: " + count.toLocaleString();
 }, 2000);
+
+// ---------------- VIEWERS ----------------
+
+let viewers = 12000 + Math.floor(Math.random() * 3000);
+
+function updateViewers() {
+    let change = Math.floor(Math.random() * 200 - 100);
+    viewers += change;
+
+    if (viewers < 5000) viewers = 5000;
+
+    viewsEl.innerText = "👀 Viewers online: " + viewers.toLocaleString();
+}
+
+setInterval(updateViewers, 1500);
 
 // ---------------- BUTTON ----------------
 
@@ -190,44 +177,23 @@ document.querySelector(".btn").addEventListener("click", () => {
     count += gain;
 
     localStorage.setItem("downloads", count);
-    animateTo(count);
+    downloadsEl.innerText = "Pobrania: " + count.toLocaleString();
 });
 
 // ---------------- POPUPS ----------------
-
-const names = ["Kacper123","SigmaBoy","NoScope","CryptoKing","UserX"];
 
 function spawnPopup() {
     const el = document.createElement("div");
     el.className = "popup";
 
-    const name = names[Math.floor(Math.random() * names.length)];
-    const amount = Math.floor(1 + Math.random() * 5);
-
-    el.innerText = name + " just downloaded (" + amount + ")";
+    el.innerText = "Someone just downloaded the file";
 
     popupContainer.appendChild(el);
 
     setTimeout(() => el.remove(), 3500);
 }
 
-setInterval(spawnPopup, 700);
-
-// ---------------- PARTICLES ----------------
-
-const container = document.getElementById("particles");
-
-function spawn() {
-    const el = document.createElement("span");
-    el.innerText = "$";
-    el.style.left = Math.random() * window.innerWidth + "px";
-    el.style.animationDuration = (2 + Math.random() * 3) + "s";
-    container.appendChild(el);
-
-    setTimeout(() => el.remove(), 5000);
-}
-
-setInterval(spawn, 80);
+setInterval(spawnPopup, 800);
 </script>
 
 </body>
