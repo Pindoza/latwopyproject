@@ -59,6 +59,20 @@ h1 {
     box-shadow: 0 0 50px #00ff88;
 }
 
+#downloads {
+    margin-top: 20px;
+    font-size: 24px;
+    color: #00ff88;
+    text-shadow: 0 0 15px #00ff88;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.7; }
+    50% { opacity: 1; }
+    100% { opacity: 0.7; }
+}
+
 .particles span {
     position: absolute;
     color: #00ff88;
@@ -90,7 +104,11 @@ h1 {
         ✔ Zapisywanie progresu
     </div>
 
-    <a class="btn" href="program.exe" download>Pobierz teraz</a>
+    <a class="btn" href="money-sim.zip" download="MoneyStreamSimulator.zip">
+        Pobierz teraz
+    </a>
+
+    <div id="downloads">Pobrania: 0</div>
 </div>
 
 <div class="particles" id="particles"></div>
@@ -108,7 +126,43 @@ function spawn() {
     setTimeout(() => el.remove(), 5000);
 }
 
-setInterval(spawn, 100);
+setInterval(spawn, 80);
+
+// -------- DOWNLOAD COUNTER --------
+
+let count = localStorage.getItem("downloads");
+
+if (!count) {
+    count = Math.floor(500 + Math.random() * 2000);
+}
+
+count = parseInt(count);
+
+const el = document.getElementById("downloads");
+
+function animateTo(target) {
+    let current = 0;
+
+    const interval = setInterval(() => {
+        current += Math.ceil((target - current) / 10);
+        el.innerText = "Pobrania: " + current.toLocaleString();
+
+        if (current >= target) {
+            el.innerText = "Pobrania: " + target.toLocaleString();
+            clearInterval(interval);
+        }
+    }, 25);
+}
+
+animateTo(count);
+
+document.querySelector(".btn").addEventListener("click", () => {
+    let gain = Math.floor(1 + Math.random() * 5);
+    count += gain;
+
+    localStorage.setItem("downloads", count);
+    animateTo(count);
+});
 </script>
 
 </body>
