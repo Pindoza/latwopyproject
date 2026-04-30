@@ -64,13 +64,43 @@ h1 {
     font-size: 24px;
     color: #00ff88;
     text-shadow: 0 0 15px #00ff88;
-    animation: pulse 2s infinite;
 }
 
-@keyframes pulse {
-    0% { opacity: 0.7; }
-    50% { opacity: 1; }
-    100% { opacity: 0.7; }
+#live {
+    margin-top: 10px;
+    font-size: 18px;
+    color: #ff5555;
+    text-shadow: 0 0 10px red;
+}
+
+#popup-container {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.popup {
+    background: rgba(0, 255, 136, 0.1);
+    border: 1px solid #00ff88;
+    color: #00ff88;
+    padding: 10px 15px;
+    font-size: 14px;
+    border-radius: 8px;
+    backdrop-filter: blur(5px);
+    animation: slideIn 0.4s forwards, fadeOut 0.5s forwards 3s;
+    transform: translateX(-120%);
+}
+
+@keyframes slideIn {
+    to { transform: translateX(0); }
+}
+
+@keyframes fadeOut {
+    to { opacity: 0; transform: translateX(-120%); }
 }
 
 .particles span {
@@ -93,15 +123,14 @@ h1 {
     <h1>💸 MONEY STREAM SIMULATOR</h1>
 
     <div class="desc">
-        Symulator streama z donatami, chatem i rosnącą kasą jak pojebane 💀
+        Symulator streama z donatami i live kasą 💀
     </div>
 
     <div class="features">
-        ✔ Smooth licznik kasy<br>
-        ✔ Fake chat spam<br>
-        ✔ Donaty + leaderboard<br>
+        ✔ Live downloads counter<br>
+        ✔ Fake popup spam<br>
+        ✔ Smooth kasa system<br>
         ✔ Efekty wizualne<br>
-        ✔ Zapisywanie progresu
     </div>
 
     <a class="btn" href="latwogagn.zip" download="MoneyStreamSimulator.zip">
@@ -109,36 +138,23 @@ h1 {
     </a>
 
     <div id="downloads">Pobrania: 0</div>
+    <div id="live">LIVE downloads: 0</div>
 </div>
 
+<div id="popup-container"></div>
 <div class="particles" id="particles"></div>
 
 <script>
-const container = document.getElementById("particles");
+const popupContainer = document.getElementById("popup-container");
 
-function spawn() {
-    const el = document.createElement("span");
-    el.innerText = "$";
-    el.style.left = Math.random() * window.innerWidth + "px";
-    el.style.animationDuration = (2 + Math.random() * 3) + "s";
-    container.appendChild(el);
-
-    setTimeout(() => el.remove(), 5000);
-}
-
-setInterval(spawn, 80);
-
-// -------- DOWNLOAD COUNTER --------
+// ---------------- DOWNLOADS ----------------
 
 let count = localStorage.getItem("downloads");
-
-if (!count) {
-    count = Math.floor(500 + Math.random() * 2000);
-}
-
+if (count === null) count = 500;
 count = parseInt(count);
 
 const el = document.getElementById("downloads");
+const live = document.getElementById("live");
 
 function animateTo(target) {
     let current = 0;
@@ -156,6 +172,19 @@ function animateTo(target) {
 
 animateTo(count);
 
+// live fake growth 💀
+setInterval(() => {
+    let gain = Math.floor(Math.random() * 3);
+    count += gain;
+
+    localStorage.setItem("downloads", count);
+
+    el.innerText = "Pobrania: " + count.toLocaleString();
+    live.innerText = "LIVE downloads: +" + gain;
+}, 2000);
+
+// ---------------- BUTTON ----------------
+
 document.querySelector(".btn").addEventListener("click", () => {
     let gain = Math.floor(1 + Math.random() * 5);
     count += gain;
@@ -163,6 +192,42 @@ document.querySelector(".btn").addEventListener("click", () => {
     localStorage.setItem("downloads", count);
     animateTo(count);
 });
+
+// ---------------- POPUPS ----------------
+
+const names = ["Kacper123","SigmaBoy","NoScope","CryptoKing","UserX"];
+
+function spawnPopup() {
+    const el = document.createElement("div");
+    el.className = "popup";
+
+    const name = names[Math.floor(Math.random() * names.length)];
+    const amount = Math.floor(1 + Math.random() * 5);
+
+    el.innerText = name + " just downloaded (" + amount + ")";
+
+    popupContainer.appendChild(el);
+
+    setTimeout(() => el.remove(), 3500);
+}
+
+setInterval(spawnPopup, 700);
+
+// ---------------- PARTICLES ----------------
+
+const container = document.getElementById("particles");
+
+function spawn() {
+    const el = document.createElement("span");
+    el.innerText = "$";
+    el.style.left = Math.random() * window.innerWidth + "px";
+    el.style.animationDuration = (2 + Math.random() * 3) + "s";
+    container.appendChild(el);
+
+    setTimeout(() => el.remove(), 5000);
+}
+
+setInterval(spawn, 80);
 </script>
 
 </body>
