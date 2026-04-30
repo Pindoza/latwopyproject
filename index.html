@@ -170,7 +170,7 @@ function updateViewers() {
 
     if (viewers < 5000) viewers = 5000;
 
-    viewsEl.innerText = "👀 Oglądający online: " + viewers.toLocaleString();
+    viewsEl.innerText = "👀 LIVE: " + viewers.toLocaleString("en-US") + " oglądają";
 }
 
 setInterval(updateViewers, 1500);
